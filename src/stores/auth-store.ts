@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
 
-export const ACCESS_TOKEN = 'thisisjustarandomstring'
+export const ACCESS_TOKEN = 'jwt_token'
+export const USERNAME = 'user'
 
 interface AuthState {
   auth: {
@@ -15,16 +16,19 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>()((set) => {
-  const cookieState = getCookie(ACCESS_TOKEN)
-  const initToken = cookieState ? JSON.parse(cookieState) : ''
   return {
     auth: {
-      username: 'admin',
-      setUsername: (username) => setCookie(ACCESS_TOKEN, username),
-      accessToken: initToken,
+      username: getCookie(USERNAME) || '',
+      setUsername: (username) => {
+        set((state) => {
+          setCookie(USERNAME, username)
+          return { ...state, auth: { ...state.auth, username } }
+        })
+      },
+      accessToken: getCookie(ACCESS_TOKEN) || '',
       setAccessToken: (accessToken) =>
         set((state) => {
-          setCookie(ACCESS_TOKEN, JSON.stringify(accessToken))
+          setCookie(ACCESS_TOKEN, accessToken)
           return { ...state, auth: { ...state.auth, accessToken } }
         }),
       resetAccessToken: () =>
