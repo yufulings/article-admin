@@ -16,7 +16,6 @@ import {
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 import { useNavigate } from '@tanstack/react-router'
-import { toast } from 'sonner'
 
 const formSchema = z
   .object({
@@ -51,8 +50,6 @@ export function SignUpForm({
     setIsLoading(false)
     if (res.code === 0) {
       await navigate({ to: '/sign-in', replace: true })
-    }else {
-      toast.error(res.message)
     }
   }
 
